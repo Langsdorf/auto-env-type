@@ -1,0 +1,56 @@
+{
+  "name": "auto-env-type",
+  "displayName": "auto-env-type",
+  "description": "Create typescript types based on your .env file",
+  "author": "Thiago Langsdorf",
+  "publisher": "Langsdorf",
+  "repository": "https://github.com/Langsdorf/auto-env-type",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "auto-env-type",
+      "properties": {
+        "auto-env-type.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/Disable this extension"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "auto-env-type.toggle",
+        "title": "Toggle auto-env-type"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.87.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9"
+  }
+}
