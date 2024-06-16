@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
       .update("enabled", !isEnabled, true);
   });
 
-  vscode.workspace.onDidSaveTextDocument((e) => {
+  vscode.workspace.onDidSaveTextDocument(async (e) => {
     if (!e.fileName.endsWith(".env")) {
       return;
     }
@@ -33,10 +33,17 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    const hasPackageJson = vscode.workspace.findFiles("package.json");
+    const hasPackageJson = await vscode.workspace.findFiles("package.json");
 
     if (!hasPackageJson) {
       console.log("No package.json found. Exiting...");
+      return;
+    }
+
+    const hasTsConfig = await vscode.workspace.findFiles("tsconfig.json");
+
+    if (!hasTsConfig) {
+      console.log("No tsconfig.json found. Exiting...");
       return;
     }
 
@@ -74,11 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
     const content = BASE_TYPE.replace(
       "{#each keys}",
       keys
-        .map((key, i) =>
-          i === 0
-            ? `${key}: string | undefined;`
-            : `	  ${key}: string | undefined;`
-        )
+        .map((key, i) => (i === 0 ? `${key}?: string;` : `	  ${key}?: string;`))
         .join("\n")
     ).substring(1);
 
@@ -88,13 +91,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     wsEdit.createFile(file, { ignoreIfExists: true });
 
-    vscode.workspace.applyEdit(wsEdit);
+    await vscode.workspace.applyEdit(wsEdit);
 
-    vscode.workspace.fs
-      .writeFile(file, new TextEncoder().encode(content))
-      .then(() => {
-        console.log("File created");
-      });
+    await vscode.workspace.fs.writeFile(
+      file,
+      new TextEncoder().encode(content)
+    );
   });
 }
 
