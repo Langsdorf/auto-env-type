@@ -24,6 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    const path = e.fileName.split("/").slice(0, -1).join("/");
+
     const isEnabled = vscode.workspace
       .getConfiguration("auto-env-type")
       .get<boolean>("enabled");
@@ -33,23 +35,21 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    const hasPackageJson = await vscode.workspace.findFiles("package.json");
+    const hasPackageJson = await vscode.workspace.findFiles(
+      `${path}/package.json`
+    );
 
     if (!hasPackageJson) {
       console.log("No package.json found. Exiting...");
       return;
     }
 
-    const hasTsConfig = await vscode.workspace.findFiles("tsconfig.json");
+    const hasTsConfig = await vscode.workspace.findFiles(
+      `${path}/tsconfig.json`
+    );
 
     if (!hasTsConfig) {
       console.log("No tsconfig.json found. Exiting...");
-      return;
-    }
-
-    const wsPath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-
-    if (!wsPath) {
       return;
     }
 
@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
         .join("\n")
     ).substring(1);
 
-    const file = vscode.Uri.file(`${wsPath}/env.d.ts`);
+    const file = vscode.Uri.file(`${path}/env.d.ts`);
 
     const wsEdit = new vscode.WorkspaceEdit();
 
